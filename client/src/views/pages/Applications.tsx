@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { getApplication } from "../../http/requests/getRequest";
+import { getApplication } from "../../http/requests/GetRequest";
 import ApplicationModal from "../modal/ApplicationModal";
 
 interface ApplicationData {
