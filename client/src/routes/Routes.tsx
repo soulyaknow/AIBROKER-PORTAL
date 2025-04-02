@@ -8,7 +8,7 @@ function RoutesComponent() {
   return (
     <Routes>
       {/* public endpoint */}
-      <Route path="/signin" element={<Signin />}></Route>
+      <Route path="/" element={<Signin />}></Route>
       <Route path="/signup" element={<Signup />}></Route>
       <Route path="/dashboard" element={<Dashboard />}></Route>
       <Route path="/applications" element={<Applications />}></Route>

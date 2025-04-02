@@ -11,7 +11,7 @@ function Navbar() {
         <div className="flex justify-between items-center h-20">
           {/* Logo Section */}
           <div className="flex-shrink-0 flex items-center">
-            <NavLink to="/signin">
+            <NavLink to="/">
               <img
                 src="/Koruna-Logo-white 1.svg"
                 alt="Koruna Logo"
