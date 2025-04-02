@@ -1,0 +1,41 @@
+#modal-bg {
+  background: url("/Login-pop-up-bg 1.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+#dashboard-bg {
+  background: url("/Dashboard-Header-BG 1.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+#dashboard-header-bg {
+  background: url("/Dashboard-CTA-BG 1.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+#index-bg {
+  background: url("/Login - BG 1.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+#application-bg {
+  background: url("/applications-bg 1.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+#applicantion-header-bg {
+  background: url("/cta-bg 1.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
