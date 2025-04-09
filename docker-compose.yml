@@ -1,0 +1,49 @@
+version: '3'
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "1499:1499"
+    networks:
+      - app-network
+
+  server:
+    build:
+      context: ./server 
+      dockerfile: Dockerfile
+    ports:
+      - "1500:1500"
+    networks:
+      - app-network
+    depends_on:
+      - database
+    environment:
+      DB_HOST: database
+      DB_USER: postgres
+      DB_PASSWORD: soulyaknow30
+      DB_NAME: brokerportal
+      DB_PORT: 5432
+      JWT_SECRET: 09fb85c4aa1408b76c8bad23b748be9435334c03a5e9e76114378f4ecf7532f5
+      JWT_EXPIRES_IN: 1d
+
+  database:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: soulyaknow30
+      POSTGRES_DB: brokerportal
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
