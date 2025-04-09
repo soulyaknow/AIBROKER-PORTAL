@@ -1,19 +1,51 @@
-import React, { useState } from "react";
-import { User, Key } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { User, Key, Eye, EyeClosed } from "lucide-react";
 import Modal from "../modal/SigninModal";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { signin } from "../../http/requests/PostRequest";
+import { useNavigate } from "react-router-dom";
+import { setEmailPassword, getEmail, getPassword } from "../../utils/Cookies";
 
 function Signin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsModalOpen(true);
+    try {
+      const response = await signin(email, password);
+
+      if (response?.token) {
+        const token = response.token;
+        sessionStorage.setItem("token", token);
+
+        setEmailPassword(email, password, rememberMe);
+
+        navigate("/dashboard", { replace: true });
+      } else {
+        console.error("No token received from server.");
+      }
+    } catch (error) {
+      console.error("Invalid username or password.", error);
+      alert("Invalid username or password.");
+    }
   };
+
+  useEffect(() => {
+    const savedEmail = getEmail();
+    const savedPassword = getPassword();
+    if (savedEmail && savedPassword) {
+      setEmail(savedEmail);
+      setPassword(savedPassword);
+      setRememberMe(true);
+    }
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col" id="index-bg">
@@ -45,8 +77,8 @@ function Signin() {
                   type="text"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full outline-none text-gray-700 placeholder-gray-400"
-                  placeholder="Enter your username"
+                  className="w-full outline-none text-gray-600 placeholder-gray-400"
+                  placeholder="Enter your email"
                 />
               </div>
 
@@ -54,12 +86,25 @@ function Signin() {
               <div className="flex items-center border border-violet-700 rounded-2xl px-4 py-3 focus-within:border-violet-500 transition-colors w-full">
                 <Key className="text-violet-700 mr-3" size={20} />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full outline-none text-gray-700 placeholder-gray-400"
-                  placeholder="Enter your password"
+                  className="w-full outline-none text-gray-600 placeholder-gray-400 bg-transparent"
+                  placeholder="Create your password"
                 />
+                {showPassword ? (
+                  <Eye
+                    className="text-violet-700 cursor-pointer"
+                    size={20}
+                    onClick={() => setShowPassword(false)}
+                  />
+                ) : (
+                  <EyeClosed
+                    className="text-violet-700 cursor-pointer"
+                    size={20}
+                    onClick={() => setShowPassword(true)}
+                  />
+                )}
               </div>
 
               {/* Remember Me & Forgot Password */}

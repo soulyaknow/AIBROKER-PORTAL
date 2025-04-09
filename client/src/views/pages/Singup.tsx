@@ -5,22 +5,43 @@ import {
   Folder,
   Phone,
   Building,
-  Shell,
-  ServerCog,
+  Eye,
+  EyeClosed,
 } from "lucide-react";
 import Navbar from "../components/Navbar";
+import { signup } from "../../http/requests/PostRequest";
 
 function Signup() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [contactNumber, setContactNumber] = useState("");
   const [companyName, setCompanyName] = useState("");
-  const [crm, setCrm] = useState("");
-  const [aggregator, setAggregator] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const [showPassword, setShowPassword] = useState(false);
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    try {
+      const payload = {
+        fullName,
+        email,
+        password,
+        contactNumber,
+        companyName,
+      };
+
+      const response = await signup(payload);
+
+      if (response) {
+        alert("Signup successful");
+        setFullName("");
+        setEmail("");
+        setPassword("");
+        setContactNumber("");
+        setCompanyName("");
+      }
+    } catch (error) {
+      alert("Email already exist");
+    }
   };
 
   return (
@@ -51,7 +72,7 @@ function Signup() {
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="w-full outline-none text-gray-700 placeholder-gray-400"
+                  className="w-full outline-none text-white placeholder-white"
                   placeholder="Full Name"
                 />
               </div>
@@ -62,9 +83,33 @@ function Signup() {
                   type="text"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full outline-none text-gray-700 placeholder-gray-400"
+                  className="w-full outline-none text-white placeholder-white"
                   placeholder="Email Address"
                 />
+              </div>
+
+              <div className="flex items-center border-2 border-violet-700 rounded-2xl px-4 py-3 focus-within:border-violet-500 transition-colors w-full">
+                <Key className="text-violet-700 mr-3" size={20} />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full outline-none text-white placeholder-white bg-transparent"
+                  placeholder="Create your password"
+                />
+                {showPassword ? (
+                  <Eye
+                    className="text-violet-700 cursor-pointer"
+                    size={20}
+                    onClick={() => setShowPassword(false)}
+                  />
+                ) : (
+                  <EyeClosed
+                    className="text-violet-700 cursor-pointer"
+                    size={20}
+                    onClick={() => setShowPassword(true)}
+                  />
+                )}
               </div>
 
               <div className="flex items-center border-2 border-violet-700 rounded-2xl px-4 py-3 focus-within:border-violet-500 transition-colors w-full">
@@ -73,7 +118,7 @@ function Signup() {
                   type="text"
                   value={contactNumber}
                   onChange={(e) => setContactNumber(e.target.value)}
-                  className="w-full outline-none text-gray-700 placeholder-gray-400"
+                  className="w-full outline-none text-white placeholder-white"
                   placeholder="Contact Number"
                 />
               </div>
@@ -84,41 +129,8 @@ function Signup() {
                   type="text"
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
-                  className="w-full outline-none text-gray-700 placeholder-gray-400"
+                  className="w-full outline-none text-white placeholder-white"
                   placeholder="Company Name"
-                />
-              </div>
-
-              <div className="flex items-center border-2 border-violet-700 rounded-2xl px-4 py-3 focus-within:border-violet-500 transition-colors w-full">
-                <Shell className="text-violet-700 mr-3" size={20} />
-                <input
-                  type="text"
-                  value={crm}
-                  onChange={(e) => setCrm(e.target.value)}
-                  className="w-full outline-none text-gray-700 placeholder-gray-400"
-                  placeholder="CRM"
-                />
-              </div>
-
-              <div className="flex items-center border-2 border-violet-700 rounded-2xl px-4 py-3 focus-within:border-violet-500 transition-colors w-full">
-                <ServerCog className="text-violet-700 mr-3" size={20} />
-                <input
-                  type="text"
-                  value={aggregator}
-                  onChange={(e) => setAggregator(e.target.value)}
-                  className="w-full outline-none text-gray-700 placeholder-gray-400"
-                  placeholder="Aggregator"
-                />
-              </div>
-
-              <div className="flex items-center border-2 border-violet-700 rounded-2xl px-4 py-3 focus-within:border-violet-500 transition-colors w-full">
-                <Key className="text-violet-700 mr-3" size={20} />
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full outline-none text-gray-700 placeholder-gray-400"
-                  placeholder="Password"
                 />
               </div>
 

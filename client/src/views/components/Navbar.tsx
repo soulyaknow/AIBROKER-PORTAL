@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import { getToken } from "../../utils/Token";
 
 function Navbar() {
-  // Replace this with real authentication logic (from context, Redux, or local storage)
-  const isAuthenticated = false; // Change to `true` to test visibility
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const token = getToken();
+    setIsAuthenticated(!!token);
+  }, []);
 
   return (
     <nav className="bg-black shadow-sm sticky top-0 z-50">
@@ -11,13 +16,11 @@ function Navbar() {
         <div className="flex justify-between items-center h-20">
           {/* Logo Section */}
           <div className="flex-shrink-0 flex items-center">
-            <NavLink to="/">
-              <img
-                src="/Koruna-Logo-white 1.svg"
-                alt="Koruna Logo"
-                className="h-12 w-auto cursor-pointer"
-              />
-            </NavLink>
+            <img
+              src="/Koruna-Logo-white 1.svg"
+              alt="Koruna Logo"
+              className="h-12 w-auto cursor-pointer"
+            />
           </div>
 
           {/* Navigation Links (Only show if signed in) */}
