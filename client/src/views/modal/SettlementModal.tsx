@@ -9,11 +9,38 @@ import {
   RectangleEllipsisIcon,
 } from "lucide-react";
 
+interface FileItem {
+  id: string;
+  name: string;
+  url: string;
+  mimeType: string;
+  preview?: string;
+  size?: number;
+  token?: string;
+  height?: number;
+  width?: number;
+}
+
+interface ApplicationData {
+  fields: {
+    "App ID": number;
+    Status: string;
+    Applicants?: string[];
+    "Fact Find"?: FileItem[];
+    Broker?: string[];
+    License?: FileItem[];
+    Passport?: FileItem[];
+    Payslips?: FileItem[];
+  };
+  recordId: string;
+}
+
 type SettlementProps = {
   onClose: () => void;
+  selectedStage: ApplicationData | null;
 };
 
-function SettlementModal({ onClose }: SettlementProps) {
+function SettlementModal({ onClose, selectedStage }: SettlementProps) {
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl border-2 border-sky-300 w-[34rem] max-w-full max-h-[90vh] relative shadow-lg flex flex-col">
@@ -48,6 +75,21 @@ function SettlementModal({ onClose }: SettlementProps) {
             >
               <item.icon className="w-5 h-5 text-purple-600" />
               <span>{item.label}</span>
+              {(item.label === "App ID" && (
+                <span className="text-gray-700">
+                  {selectedStage?.fields?.["App ID"] ?? ""}
+                </span>
+              )) ||
+                (item.label === "Applicants" && (
+                  <span className="text-gray-700">
+                    {selectedStage?.fields?.["Applicants"]?.length ?? ""}
+                  </span>
+                )) ||
+                (item.label === "Status" && (
+                  <span className="text-gray-700">
+                    {selectedStage?.fields?.["Status"] ?? ""}
+                  </span>
+                ))}
             </div>
           ))}
         </div>

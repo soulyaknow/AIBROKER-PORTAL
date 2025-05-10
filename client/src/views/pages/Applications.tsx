@@ -408,22 +408,40 @@ function Applications() {
         />
       )}
       {currentStageModal === "Research" && (
-        <ResearchModal onClose={() => setCurrentStageModal(null)} />
+        <ResearchModal
+          onClose={() => setCurrentStageModal(null)}
+          selectedStage={selectedStage}
+        />
       )}
       {currentStageModal === "PreSubmission" && (
-        <PreSubmissionModal onClose={() => setCurrentStageModal(null)} />
+        <PreSubmissionModal
+          onClose={() => setCurrentStageModal(null)}
+          selectedStage={selectedStage}
+        />
       )}
       {currentStageModal === "Submission" && (
-        <SubmissionModal onClose={() => setCurrentStageModal(null)} />
+        <SubmissionModal
+          onClose={() => setCurrentStageModal(null)}
+          selectedStage={selectedStage}
+        />
       )}
       {currentStageModal === "PostSubmission" && (
-        <PostSubmissionModal onClose={() => setCurrentStageModal(null)} />
+        <PostSubmissionModal
+          onClose={() => setCurrentStageModal(null)}
+          selectedStage={selectedStage}
+        />
       )}
       {currentStageModal === "Settlement" && (
-        <SettlementModal onClose={() => setCurrentStageModal(null)} />
+        <SettlementModal
+          onClose={() => setCurrentStageModal(null)}
+          selectedStage={selectedStage}
+        />
       )}
       {currentStageModal === "PostSettlement" && (
-        <PostSettlementModal onClose={() => setCurrentStageModal(null)} />
+        <PostSettlementModal
+          onClose={() => setCurrentStageModal(null)}
+          selectedStage={selectedStage}
+        />
       )}
     </div>
   );

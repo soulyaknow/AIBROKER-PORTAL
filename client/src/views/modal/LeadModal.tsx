@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  X,
-  Users,
-  FileText,
-  ClipboardList,
-  BadgeCheck,
-  IdCard,
-} from "lucide-react";
+import { X, Users, FileText, ClipboardList, IdCard, Cog } from "lucide-react";
 
 interface FileItem {
   id: string;
@@ -24,9 +17,10 @@ interface ApplicationData {
   fields: {
     "App ID": number;
     Status: string;
-    Applicants: string[];
-    "Fact Find": FileItem[];
-    Broker: string[];
+    Applicants?: string[];
+    "Fact Find"?: FileItem[];
+    Broker?: string[];
+    "Client Handover"?: FileItem[];
     License?: FileItem[];
     Passport?: FileItem[];
     Payslips?: FileItem[];
@@ -56,60 +50,52 @@ function LeadModal({ onClose, selectedStage }: LeadProps) {
           </h2>
         </div>
         <div className="flex-1 overflow-y-auto divide-y divide-amber-300">
-          {/* App ID */}
-          <div className="flex items-center gap-2 p-4 hover:bg-gray-50 font-semibold">
-            <FileText className="w-5 h-5 text-purple-600" />
-            <span>App ID:</span>
-            <span className="text-gray-700">
-              {selectedStage?.fields?.["App ID"] ?? "N/A"}
-            </span>
-          </div>
-
-          {/* Applicants */}
-          <div className="flex items-center gap-2 p-4 hover:bg-gray-50 font-semibold">
-            <Users className="w-5 h-5 text-purple-600" />
-            <span>Applicants:</span>
-            <span className="text-gray-700">
-              {selectedStage?.fields?.Applicants?.length ?? "N/A"}
-            </span>
-          </div>
-
-          {/* Fact Find (placeholder, no data yet) */}
-          <div className="flex items-center gap-2 p-4 hover:bg-gray-50 font-semibold">
-            <FileText className="w-5 h-5 text-purple-600" />
-            <span>Fact Find</span>
-            <span className="text-gray-700">
-              {selectedStage?.fields?.["Fact Find"]?.length
-                ? `${selectedStage?.fields?.["Fact Find"]?.length} file(s)`
-                : "N/A"}
-            </span>
-          </div>
-
-          {/* Client Handover (placeholder) */}
-          <div className="flex items-center gap-2 p-4 hover:bg-gray-50 font-semibold">
-            <ClipboardList className="w-5 h-5 text-purple-600" />
-            <span>Client Handover</span>
-          </div>
-
-          {/* Passport */}
-          <div className="flex items-center gap-2 p-4 hover:bg-gray-50 font-semibold">
-            <IdCard className="w-5 h-5 text-purple-600" />
-            <span>Passport:</span>
-            <span className="text-gray-700">
-              {selectedStage?.fields?.Passport?.length
-                ? `${selectedStage.fields.Passport.length} file(s)`
-                : "N/A"}
-            </span>
-          </div>
-
-          {/* Status */}
-          <div className="flex items-center gap-2 p-4 hover:bg-gray-50 font-semibold">
-            <BadgeCheck className="w-5 h-5 text-purple-600" />
-            <span>Status:</span>
-            <span className="text-gray-700">
-              {selectedStage?.fields?.Status ?? "N/A"}
-            </span>
-          </div>
+          {[
+            { icon: FileText, label: "App ID" },
+            { icon: Users, label: "Applicants" },
+            { icon: FileText, label: "Fact Find" },
+            { icon: ClipboardList, label: "Client Handover" },
+            { icon: IdCard, label: "Passport" },
+            { icon: Cog, label: "Status" },
+          ].map((item, idx) => (
+            <div
+              key={idx}
+              className="flex items-center gap-2 p-4 hover:bg-gray-50 font-semibold"
+            >
+              <item.icon className="w-5 h-5 text-purple-600" />
+              <span>{item.label}:</span>
+              {(item.label === "App ID" && (
+                <span className="text-gray-700">
+                  {selectedStage?.fields?.["App ID"] ?? ""}
+                </span>
+              )) ||
+                (item.label === "Applicants" && (
+                  <span className="text-gray-700">
+                    {selectedStage?.fields?.["Applicants"]?.length ?? ""}
+                  </span>
+                )) ||
+                (item.label === "Fact Find" && (
+                  <span className="text-gray-700">
+                    {selectedStage?.fields?.["Fact Find"]?.length ?? ""}
+                  </span>
+                )) ||
+                (item.label === "Client Handover" && (
+                  <span className="text-gray-700">
+                    {selectedStage?.fields?.["Client Handover"]?.length ?? ""}
+                  </span>
+                )) ||
+                (item.label === "Passport" && (
+                  <span className="text-gray-700">
+                    {selectedStage?.fields?.["Passport"]?.length ?? ""}
+                  </span>
+                )) ||
+                (item.label === "Status" && (
+                  <span className="text-gray-700">
+                    {selectedStage?.fields?.["Status"] ?? ""}
+                  </span>
+                ))}
+            </div>
+          ))}
         </div>
         <div className="p-4 flex justify-center border-t border-amber-300">
           <button
