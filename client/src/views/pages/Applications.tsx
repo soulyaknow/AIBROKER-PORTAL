@@ -3,6 +3,13 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { getApplication } from "../../http/requests/GetRequest";
 import ApplicationModal from "../modal/ApplicationModal";
+import LeadModal from "../modal/LeadModal";
+import ResearchModal from "../modal/ResearchModal";
+import PreSubmissionModal from "../modal/PreSubmissionModal";
+import SubmissionModal from "../modal/SubmissionModal";
+import PostSubmissionModal from "../modal/PostSubmissionStage";
+import SettlementModal from "../modal/SettlementModal";
+import PostSettlementModal from "../modal/PostSettlementModal";
 
 interface ApplicationData {
   fields: {
@@ -10,21 +17,9 @@ interface ApplicationData {
     Status: string;
     Applicants: string[];
     Broker: string[];
-    License?: Array<{
-      url: string;
-      name: string;
-      mimeType: string;
-    }>;
-    Passport?: Array<{
-      url: string;
-      name: string;
-      mimeType: string;
-    }>;
-    Payslips?: Array<{
-      url: string;
-      name: string;
-      mimeType: string;
-    }>;
+    License?: Array<{ url: string; name: string; mimeType: string }>;
+    Passport?: Array<{ url: string; name: string; mimeType: string }>;
+    Payslips?: Array<{ url: string; name: string; mimeType: string }>;
   };
   recordId: string;
 }
@@ -68,55 +63,72 @@ function Applications() {
     useState<ApplicationData | null>(null);
   const filterRef = useRef<HTMLDivElement | null>(null);
 
+  const [currentStageModal, setCurrentStageModal] = useState<string | null>(
+    null
+  );
+
   const stageHeader = [
     {
       text: "Lead Stage",
       border: "border-amber-300",
       icon: "/Vector 2.svg",
+      modal: "Lead",
     },
     {
       text: "Research Stage",
       border: "border-pink-300",
       icon: "/Vector 2 (1).svg",
+      modal: "Research",
     },
     {
       text: "Pre Submission",
       border: "border-red-300",
       icon: "/Vector 2 (2).svg",
+      modal: "PreSubmission",
     },
     {
       text: "Submission",
       border: "border-green-300",
       icon: "/Vector 2 (3).svg",
+      modal: "Submission",
     },
     {
       text: "Post Submission",
       border: "border-blue-300",
       icon: "/Vector 2 (4).svg",
+      modal: "PostSubmission",
     },
     {
       text: "Settlement",
       border: "border-sky-300",
       icon: "/Vector 2 (5).svg",
+      modal: "Settlement",
     },
     {
       text: "Post Settlement",
       border: "border-rose-300",
       icon: "/Vector 2 (6).svg",
+      modal: "PostSettlement",
     },
   ];
+
+  const statusToStageModal: Record<string, string> = {
+    New: "Lead",
+    Research: "Research",
+    "Pre Submission": "PreSubmission",
+    Submission: "Submission",
+    "Post Submission": "PostSubmission",
+    Settlement: "Settlement",
+    "Post Settlement": "PostSettlement",
+  };
 
   const statusOptions = ["Document Capture", "Processing", "Completed"];
 
   const getdatas = async () => {
     try {
       const records = await getApplication();
-
-      // Extracting the actual structure you need
       const structuredData = records.structure_data;
       console.log(structuredData);
-
-      // Ensure it matches the StructuredData type before setting state
       setApplicationData(structuredData as StructuredData);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -125,10 +137,8 @@ function Applications() {
 
   const filterApplications = () => {
     if (!applicationData) return [];
-
     let filtered = [...applicationData.applications_data];
 
-    // Apply search
     if (searchTerm) {
       filtered = filtered.filter(
         (app) =>
@@ -140,7 +150,6 @@ function Applications() {
       );
     }
 
-    // Apply status filters
     if (selectedFilters.length > 0) {
       filtered = filtered.filter((app) =>
         selectedFilters.includes(app.fields.Status)
@@ -160,6 +169,13 @@ function Applications() {
 
   useEffect(() => {
     getdatas();
+
+    const interval = setInterval(() => {
+      console.log("Fetching latest application data...");
+      getdatas();
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -188,15 +204,29 @@ function Applications() {
     setIsModalOpen(true);
   };
 
+  const handleOpenStageModal = (stage: string, recordId: string) => {
+    console.log(`Opening ${stage} modal for recordId: ${recordId}`);
+    setCurrentStageModal(stage);
+  };
+
   const filteredApplications = filterApplications();
+
+  useEffect(() => {
+    filteredApplications.forEach((app) => {
+      if (!statusToStageModal[app.fields.Status]) {
+        console.warn(
+          `Status "${app.fields.Status}" is not mapped to any stage.`
+        );
+      }
+    });
+  }, [filteredApplications]);
 
   return (
     <div className="min-h-screen flex flex-col" id="application-bg">
       <Navbar />
       <main className="flex-1 flex flex-col">
-        {/* 1st Section - view and filter */}
+        {/* View and Filter Section */}
         <div className="h-[30vh] flex flex-col" id="dashboard-bg">
-          {/* Top Section - Market Trends */}
           <div className="flex-grow p-4 flex items-center justify-center text-white text-center mx-10">
             <div className="flex p-5 w-full h-full justify-between items-center">
               <div className="flex space-x-2">
@@ -225,7 +255,6 @@ function Applications() {
                       viewBox="0 0 20 20"
                       fill="currentColor"
                       aria-hidden="true"
-                      data-slot="icon"
                     >
                       <path
                         fillRule="evenodd"
@@ -260,7 +289,6 @@ function Applications() {
             </div>
           </div>
 
-          {/* Bottom Section - Fixed at the bottom */}
           <div
             className="h-24 flex items-center justify-center text-white text-center p-4 w-full"
             id="applicantion-header-bg"
@@ -276,7 +304,7 @@ function Applications() {
           </div>
         </div>
 
-        {/* 2nd Section - stage header*/}
+        {/* Stage Header */}
         <div className="flex-1 flex flex-col mx-10">
           <div className="grid grid-cols-7 px-6 pt-6 gap-2">
             {stageHeader.map((stage, index) => (
@@ -284,7 +312,6 @@ function Applications() {
                 key={index}
                 className={`relative w-full bg-stone-200 p-2 border-2 ${stage.border} rounded-r-full`}
               >
-                {/* Inner Box */}
                 <div className="h-full w-full bg-white flex justify-start items-center pl-2 rounded-r-full">
                   <img src={stage.icon} alt="icon" className="h-5 w-5" />
                   <span className="font-bold text-violet-700 ml-2 text-sm">
@@ -296,45 +323,53 @@ function Applications() {
           </div>
         </div>
 
-        {/* 3rd Section - Stage Cards */}
+        {/* Stage Cards */}
         <div className="flex-1 mx-10 mt-2 overflow-auto">
           <div className="grid grid-cols-7 px-6 gap-2 min-h-[calc(100vh-30vh-12rem)]">
-            {/* Lead Stage Column */}
-            <div className="flex flex-col gap-2 h-full">
-              {filteredApplications.map((app) => (
-                <div
-                  key={app.recordId}
-                  className="bg-white rounded-xl shadow-lg p-4 hover:shadow-xl transition-shadow duration-200 border-2 border-amber-300"
-                >
-                  <div className="flex justify-between items-start mb-3">
-                    <span className="text-sm capitalize font-semibold">
-                      {app.fields.Status}
-                    </span>
-                  </div>
-                  <h4 className="text-lg font-semibold text-violet-800 py-2 text-center">
-                    App ID: {app.fields["App ID"]}
-                  </h4>
-                  <button
-                    onClick={() => handleReviewClick(app)}
-                    className="relative p-[2px] rounded-full bg-gradient-to-r from-violet-500 to-violet-800 cursor-pointer w-full"
-                  >
-                    <div className="text-black font-medium text-sm bg-white rounded-full p-1 hover:bg-opacity-95">
-                      Review Document
+            {stageHeader.map((stage, colIndex) => (
+              <div key={colIndex} className="flex flex-col gap-2 h-full">
+                {filteredApplications
+                  .filter(
+                    (app) =>
+                      statusToStageModal[app.fields.Status] === stage.modal
+                  )
+                  .map((app) => (
+                    <div
+                      key={app.recordId}
+                      className={`bg-white rounded-xl shadow-lg p-4 hover:shadow-xl transition-shadow duration-200 border-2 ${stage.border} cursor-pointer`}
+                      onClick={() =>
+                        handleOpenStageModal(stage.modal, app.recordId)
+                      }
+                    >
+                      <div className="flex justify-between items-start mb-3">
+                        <span className="text-sm capitalize font-semibold">
+                          {app.fields.Status}
+                        </span>
+                      </div>
+                      <h4 className="text-lg font-semibold text-violet-800 py-2 text-center">
+                        App ID: {app.fields["App ID"]}
+                      </h4>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent parent click
+                          handleReviewClick(app);
+                        }}
+                        className="relative p-[2px] rounded-full bg-gradient-to-r from-violet-500 to-violet-800 cursor-pointer w-full"
+                      >
+                        <div className="text-black font-medium text-sm bg-white rounded-full p-1 hover:bg-opacity-95">
+                          Review Document
+                        </div>
+                      </button>
                     </div>
-                  </button>
-                </div>
-              ))}
-            </div>
-            {/* Empty columns for other stages */}
-            {[...Array(6)].map((_, index) => (
-              <div key={index} className="flex flex-col gap-2 h-full">
-                <div className="h-full min-h-[100px] flex items-center justify-center"></div>
+                  ))}
               </div>
             ))}
           </div>
         </div>
       </main>
       <Footer />
+
+      {/* Application Modal */}
       {selectedApplication && applicationData && (
         <ApplicationModal
           isOpen={isModalOpen}
@@ -348,6 +383,29 @@ function Applications() {
           )}
           brokerData={applicationData.broker_data}
         />
+      )}
+
+      {/* Dynamic Stage Modals */}
+      {currentStageModal === "Lead" && (
+        <LeadModal onClose={() => setCurrentStageModal(null)} />
+      )}
+      {currentStageModal === "Research" && (
+        <ResearchModal onClose={() => setCurrentStageModal(null)} />
+      )}
+      {currentStageModal === "Pre Submission" && (
+        <PreSubmissionModal onClose={() => setCurrentStageModal(null)} />
+      )}
+      {currentStageModal === "Submission" && (
+        <SubmissionModal onClose={() => setCurrentStageModal(null)} />
+      )}
+      {currentStageModal === "Post Submission" && (
+        <PostSubmissionModal onClose={() => setCurrentStageModal(null)} />
+      )}
+      {currentStageModal === "Settlement" && (
+        <SettlementModal onClose={() => setCurrentStageModal(null)} />
+      )}
+      {currentStageModal === "Post Settlement" && (
+        <PostSettlementModal onClose={() => setCurrentStageModal(null)} />
       )}
     </div>
   );

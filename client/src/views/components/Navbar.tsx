@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { getToken } from "../../utils/Token";
+import { UserRound } from "lucide-react";
 
 function Navbar() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -69,6 +70,9 @@ function Navbar() {
                 <img src="/Alert-Icon.svg" alt="Alerts" className="h-5 w-5" />
                 <span className="ml-2 font-semibold">Alerts</span>
               </NavLink>
+              <button className="border-2 border-violet-400 cursor-pointer rounded-3xl p-1 bg-black">
+                <UserRound className="text-violet-700 font-bold" size={20} />
+              </button>
             </div>
           )}
         </div>
