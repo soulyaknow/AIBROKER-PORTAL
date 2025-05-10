@@ -8,11 +8,38 @@ import {
   IdCard,
 } from "lucide-react";
 
+interface FileItem {
+  id: string;
+  name: string;
+  url: string;
+  mimeType: string;
+  preview?: string;
+  size?: number;
+  token?: string;
+  height?: number;
+  width?: number;
+}
+
+interface ApplicationData {
+  fields: {
+    "App ID": number;
+    Status: string;
+    Applicants: string[];
+    "Fact Find": FileItem[];
+    Broker: string[];
+    License?: FileItem[];
+    Passport?: FileItem[];
+    Payslips?: FileItem[];
+  };
+  recordId: string;
+}
+
 type LeadProps = {
   onClose: () => void;
+  selectedStage: ApplicationData | null;
 };
 
-function LeadModal({ onClose }: LeadProps) {
+function LeadModal({ onClose, selectedStage }: LeadProps) {
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl border-2 border-amber-300 w-[34rem] max-w-full max-h-[90vh] relative shadow-lg flex flex-col">
@@ -29,25 +56,60 @@ function LeadModal({ onClose }: LeadProps) {
           </h2>
         </div>
         <div className="flex-1 overflow-y-auto divide-y divide-amber-300">
-          {[
-            { icon: FileText, label: "App ID" },
-            { icon: Users, label: "Applicants" },
-            { icon: FileText, label: "Fact Find" },
-            { icon: ClipboardList, label: "Client Handover" },
-            {
-              icon: IdCard,
-              label: "Passport",
-            },
-            { icon: BadgeCheck, label: "Status" },
-          ].map((item, idx) => (
-            <div
-              key={idx}
-              className="flex items-center gap-2 p-4 hover:bg-gray-50 font-semibold"
-            >
-              <item.icon className="w-5 h-5 text-purple-600" />
-              <span>{item.label}</span>
-            </div>
-          ))}
+          {/* App ID */}
+          <div className="flex items-center gap-2 p-4 hover:bg-gray-50 font-semibold">
+            <FileText className="w-5 h-5 text-purple-600" />
+            <span>App ID:</span>
+            <span className="text-gray-700">
+              {selectedStage?.fields?.["App ID"] ?? "N/A"}
+            </span>
+          </div>
+
+          {/* Applicants */}
+          <div className="flex items-center gap-2 p-4 hover:bg-gray-50 font-semibold">
+            <Users className="w-5 h-5 text-purple-600" />
+            <span>Applicants:</span>
+            <span className="text-gray-700">
+              {selectedStage?.fields?.Applicants?.length ?? "N/A"}
+            </span>
+          </div>
+
+          {/* Fact Find (placeholder, no data yet) */}
+          <div className="flex items-center gap-2 p-4 hover:bg-gray-50 font-semibold">
+            <FileText className="w-5 h-5 text-purple-600" />
+            <span>Fact Find</span>
+            <span className="text-gray-700">
+              {selectedStage?.fields?.["Fact Find"]?.length
+                ? `${selectedStage?.fields?.["Fact Find"]?.length} file(s)`
+                : "N/A"}
+            </span>
+          </div>
+
+          {/* Client Handover (placeholder) */}
+          <div className="flex items-center gap-2 p-4 hover:bg-gray-50 font-semibold">
+            <ClipboardList className="w-5 h-5 text-purple-600" />
+            <span>Client Handover</span>
+          </div>
+
+          {/* Passport */}
+          <div className="flex items-center gap-2 p-4 hover:bg-gray-50 font-semibold">
+            <IdCard className="w-5 h-5 text-purple-600" />
+            <span>Passport:</span>
+            <span className="text-gray-700">
+              {selectedStage?.fields?.Passport?.length
+                ? `${selectedStage.fields.Passport.length} file(s)`
+                : "N/A"}
+            </span>
+          </div>
+
+          {/* Status */}
+          <div className="flex items-center gap-2 p-4 hover:bg-gray-50 font-semibold">
+            <BadgeCheck className="w-5 h-5 text-purple-600" />
+            <span>Status:</span>
+            <span className="text-gray-700">
+              {selectedStage?.fields?.Status ?? "N/A"}
+            </span>
+          </div>
         </div>
         <div className="p-4 flex justify-center border-t border-amber-300">
           <button

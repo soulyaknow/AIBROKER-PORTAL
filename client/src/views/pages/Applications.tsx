@@ -11,15 +11,28 @@ import PostSubmissionModal from "../modal/PostSubmissionStage";
 import SettlementModal from "../modal/SettlementModal";
 import PostSettlementModal from "../modal/PostSettlementModal";
 
+interface FileItem {
+  id: string;
+  name: string;
+  url: string;
+  mimeType: string;
+  preview?: string;
+  size?: number;
+  token?: string;
+  height?: number;
+  width?: number;
+}
+
 interface ApplicationData {
   fields: {
     "App ID": number;
     Status: string;
     Applicants: string[];
     Broker: string[];
-    License?: Array<{ url: string; name: string; mimeType: string }>;
-    Passport?: Array<{ url: string; name: string; mimeType: string }>;
-    Payslips?: Array<{ url: string; name: string; mimeType: string }>;
+    "Fact Find": FileItem[];
+    License?: FileItem[];
+    Passport?: FileItem[];
+    Payslips?: FileItem[];
   };
   recordId: string;
 }
@@ -61,6 +74,9 @@ function Applications() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedApplication, setSelectedApplication] =
     useState<ApplicationData | null>(null);
+  const [selectedStage, setSelectedStage] = useState<ApplicationData | null>(
+    null
+  );
   const filterRef = useRef<HTMLDivElement | null>(null);
 
   const [currentStageModal, setCurrentStageModal] = useState<string | null>(
@@ -128,7 +144,6 @@ function Applications() {
     try {
       const records = await getApplication();
       const structuredData = records.structure_data;
-      console.log(structuredData);
       setApplicationData(structuredData as StructuredData);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -169,11 +184,9 @@ function Applications() {
 
   useEffect(() => {
     getdatas();
-
     const interval = setInterval(() => {
-      console.log("Fetching latest application data...");
       getdatas();
-    }, 5000);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, []);
@@ -204,8 +217,12 @@ function Applications() {
     setIsModalOpen(true);
   };
 
-  const handleOpenStageModal = (stage: string, recordId: string) => {
-    console.log(`Opening ${stage} modal for recordId: ${recordId}`);
+  const handleOpenStageModal = (
+    stage: string,
+    application: ApplicationData
+  ) => {
+    console.log(application);
+    setSelectedStage(application);
     setCurrentStageModal(stage);
   };
 
@@ -337,9 +354,7 @@ function Applications() {
                     <div
                       key={app.recordId}
                       className={`bg-white rounded-xl shadow-lg p-4 hover:shadow-xl transition-shadow duration-200 border-2 ${stage.border} cursor-pointer`}
-                      onClick={() =>
-                        handleOpenStageModal(stage.modal, app.recordId)
-                      }
+                      onClick={() => handleOpenStageModal(stage.modal, app)}
                     >
                       <div className="flex justify-between items-start mb-3">
                         <span className="text-sm capitalize font-semibold">
@@ -387,24 +402,27 @@ function Applications() {
 
       {/* Dynamic Stage Modals */}
       {currentStageModal === "Lead" && (
-        <LeadModal onClose={() => setCurrentStageModal(null)} />
+        <LeadModal
+          onClose={() => setCurrentStageModal(null)}
+          selectedStage={selectedStage}
+        />
       )}
       {currentStageModal === "Research" && (
         <ResearchModal onClose={() => setCurrentStageModal(null)} />
       )}
-      {currentStageModal === "Pre Submission" && (
+      {currentStageModal === "PreSubmission" && (
         <PreSubmissionModal onClose={() => setCurrentStageModal(null)} />
       )}
       {currentStageModal === "Submission" && (
         <SubmissionModal onClose={() => setCurrentStageModal(null)} />
       )}
-      {currentStageModal === "Post Submission" && (
+      {currentStageModal === "PostSubmission" && (
         <PostSubmissionModal onClose={() => setCurrentStageModal(null)} />
       )}
       {currentStageModal === "Settlement" && (
         <SettlementModal onClose={() => setCurrentStageModal(null)} />
       )}
-      {currentStageModal === "Post Settlement" && (
+      {currentStageModal === "PostSettlement" && (
         <PostSettlementModal onClose={() => setCurrentStageModal(null)} />
       )}
     </div>
