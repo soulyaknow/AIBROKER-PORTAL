@@ -16,8 +16,8 @@ interface ApplicationData {
   fields: {
     "App ID": number;
     Status: string;
-    Applicants: string[];
-    Broker: string[];
+    Applicants?: string[];
+    Broker?: string[];
     License?: Array<{
       url: string;
       name: string;
@@ -34,54 +34,54 @@ interface ApplicationData {
       mimeType: string;
     }>;
   };
-  recordId: string;
+  recordId?: string;
 }
 
 interface ApplicantData {
   fields: {
-    "First Name": string;
+    "First Name"?: string;
     "Middle Name"?: string;
     "Last Name"?: string;
     Title?: string;
-    Applicant_ID: number;
-    "Residential Address": string;
-    Employer: string[];
+    Applicant_ID?: number;
+    "Residential Address"?: string;
+    Employer?: string[];
   };
-  recordId: string;
+  recordId?: string;
 }
 
 interface BrokerData {
   fields: {
-    Broker_ID: number;
-    "Company Name": string;
-    "3rd Party Aggregator": string;
-    "3rd Party CRM": string;
-    Contact: string[];
+    Broker_ID?: number;
+    "Company Name"?: string;
+    "3rd Party Aggregator"?: string;
+    "3rd Party CRM"?: string;
+    Contact?: string[];
   };
-  recordId: string;
+  recordId?: string;
 }
 
 interface ApplicationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  applicationData: ApplicationData;
-  applicantData: ApplicantData[];
-  brokerData: BrokerData;
+  applicationData?: ApplicationData;
+  applicantData?: ApplicantData[];
+  brokerData?: BrokerData;
 }
 
 interface FileData {
-  url: string;
-  name: string;
-  mimeType: string;
+  url?: string;
+  name?: string;
+  mimeType?: string;
 }
 
 interface FilePreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
   file: {
-    url: string;
-    name: string;
-    mimeType: string;
+    url?: string;
+    name?: string;
+    mimeType?: string;
   } | null;
 }
 
@@ -98,7 +98,7 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
       onClick={onClose}
     >
       <div className="w-full max-w-6xl max-h-[90vh] flex flex-col items-center">
-        {file.mimeType.startsWith("image/") ? (
+        {file.mimeType?.startsWith("image/") ? (
           <img
             src={file.url}
             alt={file.name}
@@ -128,10 +128,10 @@ const FilePreview: React.FC<{ files: FileData[]; title: string }> = ({
   };
 
   const renderFile = (file: FileData, index: number) => {
-    const fileUrl = getFileUrl(file.url);
+    const fileUrl = getFileUrl(file.url ?? "");
     const fullFile = { ...file, url: fileUrl };
 
-    if (file.mimeType.startsWith("image/")) {
+    if (file.mimeType?.startsWith("image/")) {
       return (
         <div
           className="cursor-pointer"
@@ -234,7 +234,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
                 </tr>
               </thead>
               <tbody className="bg-gradient-to-b from-violet-900 to-violet-500">
-                {applicantData.map((applicant, index) => (
+                {applicantData?.map((applicant, index) => (
                   <tr
                     key={index}
                     className="text-center border border-violet-800"
@@ -263,7 +263,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
                 <input
                   type="text"
                   id="company_name"
-                  value={brokerData.fields["Company Name"]}
+                  value={brokerData?.fields["Company Name"]}
                   readOnly
                   className="w-full bg-transparent border border-violet-800 rounded p-2 focus:outline-none focus:border-violet-500"
                 />
@@ -330,7 +330,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
                 <input
                   type="text"
                   id="broker"
-                  value={brokerData.fields["3rd Party Aggregator"]}
+                  value={brokerData?.fields["3rd Party Aggregator"]}
                   readOnly
                   className="w-full bg-transparent border border-violet-800 rounded p-2 focus:outline-none focus:border-violet-500"
                 />
@@ -355,9 +355,9 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
                   <File className="text-violet-500 h-5 w-5" />
                   <label>Passport</label>
                 </div>
-                {applicationData.fields.Passport ? (
+                {applicationData?.fields.Passport ? (
                   <FilePreview
-                    files={applicationData.fields.Passport}
+                    files={applicationData?.fields.Passport}
                     title="Passport"
                   />
                 ) : (
@@ -373,9 +373,9 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
                   <File className="text-violet-500 h-5 w-5" />
                   <label>License</label>
                 </div>
-                {applicationData.fields.License ? (
+                {applicationData?.fields.License ? (
                   <FilePreview
-                    files={applicationData.fields.License}
+                    files={applicationData?.fields.License}
                     title="License"
                   />
                 ) : (
@@ -412,7 +412,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
                   <File className="text-violet-500 h-5 w-5" />
                   <label>Payslips</label>
                 </div>
-                {applicationData.fields.Payslips ? (
+                {applicationData?.fields.Payslips ? (
                   <FilePreview
                     files={applicationData.fields.Payslips}
                     title="Payslips"
@@ -439,7 +439,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
                 </div>
                 <input
                   type="text"
-                  value={applicantData.map(getFullName).join(", ")}
+                  value={applicantData?.map(getFullName).join(", ")}
                   readOnly
                   className="w-full bg-transparent border border-violet-800 rounded p-2 focus:outline-none focus:border-violet-500"
                 />
@@ -463,7 +463,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
                 </div>
                 <input
                   type="text"
-                  value={applicationData.fields.Status}
+                  value={applicationData?.fields.Status}
                   readOnly
                   className="w-full bg-transparent border border-violet-800 rounded p-2 focus:outline-none focus:border-violet-500"
                 />

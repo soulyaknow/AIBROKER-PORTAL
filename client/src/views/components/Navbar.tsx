@@ -1,15 +1,39 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { NavLink } from "react-router-dom";
-import { getToken } from "../../utils/Token";
+import { getToken, removeToken } from "../../utils/Token";
 import { UserRound } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 function Navbar() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = getToken();
     setIsAuthenticated(!!token);
   }, []);
+
+  // Close dropdown if clicked outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    removeToken();
+    setIsAuthenticated(false);
+    navigate("/");
+  };
 
   return (
     <nav className="bg-black shadow-sm sticky top-0 z-50">
@@ -24,9 +48,12 @@ function Navbar() {
             />
           </div>
 
-          {/* Navigation Links (Only show if signed in) */}
+          {/* Navigation Links */}
           {isAuthenticated && (
-            <div className="flex items-center space-x-8">
+            <div
+              className="flex items-center space-x-8 relative"
+              ref={dropdownRef}
+            >
               <NavLink
                 to="/dashboard"
                 className={({ isActive }) =>
@@ -70,9 +97,27 @@ function Navbar() {
                 <img src="/Alert-Icon.svg" alt="Alerts" className="h-5 w-5" />
                 <span className="ml-2 font-semibold">Alerts</span>
               </NavLink>
-              <button className="border-2 border-violet-400 cursor-pointer rounded-3xl p-1 bg-black">
-                <UserRound className="text-violet-700 font-bold" size={20} />
-              </button>
+
+              {/* Dropdown Button */}
+              <div className="relative">
+                <button
+                  onClick={() => setDropdownOpen((prev) => !prev)}
+                  className="border-2 border-violet-400 cursor-pointer rounded-3xl p-1 bg-black"
+                >
+                  <UserRound className="text-violet-700 font-bold" size={20} />
+                </button>
+
+                {dropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-40 bg-white border  rounded-md shadow-lg z-50">
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 text-sm text-violet-600 hover:bg-violet-600 hover:border hover:rounded-md font-semibold hover:text-white cursor-pointer"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>

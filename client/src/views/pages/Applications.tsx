@@ -27,9 +27,9 @@ interface ApplicationData {
   fields: {
     "App ID": number;
     Status: string;
-    Applicants: string[];
-    Broker: string[];
-    "Fact Find": FileItem[];
+    Applicants?: string[];
+    Broker?: string[];
+    "Fact Find"?: FileItem[];
     License?: FileItem[];
     Passport?: FileItem[];
     Payslips?: FileItem[];
@@ -39,23 +39,23 @@ interface ApplicationData {
 
 interface ApplicantData {
   fields: {
-    "First Name": string;
-    Applicant_ID: number;
-    "Residential Address": string;
-    Employer: string[];
+    "First Name"?: string;
+    Applicant_ID?: number;
+    "Residential Address"?: string;
+    Employer?: string[];
   };
-  recordId: string;
+  recordId?: string;
 }
 
 interface BrokerData {
   fields: {
-    Broker_ID: number;
-    "Company Name": string;
-    "3rd Party Aggregator": string;
-    "3rd Party CRM": string;
-    Contact: string[];
+    Broker_ID?: number;
+    "Company Name"?: string;
+    "3rd Party Aggregator"?: string;
+    "3rd Party CRM"?: string;
+    Contact?: string[];
   };
-  recordId: string;
+  recordId?: string;
 }
 
 interface StructuredData {
@@ -394,7 +394,9 @@ function Applications() {
           }}
           applicationData={selectedApplication}
           applicantData={applicationData.applicant_data.filter((applicant) =>
-            selectedApplication.fields.Applicants.includes(applicant.recordId)
+            selectedApplication.fields.Applicants?.includes(
+              applicant.recordId ?? ""
+            )
           )}
           brokerData={applicationData.broker_data}
         />

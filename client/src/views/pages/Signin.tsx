@@ -6,6 +6,7 @@ import Footer from "../components/Footer";
 import { signin } from "../../http/requests/PostRequest";
 import { useNavigate } from "react-router-dom";
 import { setEmailPassword, getEmail, getPassword } from "../../utils/Cookies";
+import { NavLink } from "react-router-dom";
 
 function Signin() {
   const [email, setEmail] = useState("");
@@ -129,13 +130,25 @@ function Signin() {
               </div>
 
               {/* Login Button */}
-              <div className="flex justify-center mb-10">
+              <div className="flex justify-center">
                 <button
                   type="submit"
                   className="w-full bg-black border-2 cursor-pointer border-violet-700 text-white py-3 rounded-2xl hover:bg-gray-800 transition-colors duration-200 font-semibold text-lg"
                 >
                   Login
                 </button>
+              </div>
+
+              <div className="flex justify-center mt-6">
+                <NavLink
+                  to="/signup"
+                  className="flex items-center gap-1 text-sm text-gray-400 hover:text-violet-500 transition-colors duration-200 group"
+                >
+                  <span>Need an account?</span>
+                  <span className="text-violet-500 font-semibold group-hover:underline">
+                    Sign up
+                  </span>
+                </NavLink>
               </div>
             </form>
           </div>

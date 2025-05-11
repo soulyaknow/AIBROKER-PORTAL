@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import { signup } from "../../http/requests/PostRequest";
+import { NavLink, useNavigate } from "react-router-dom";
 
 function Signup() {
   const [fullName, setFullName] = useState("");
@@ -18,6 +19,8 @@ function Signup() {
   const [contactNumber, setContactNumber] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -38,6 +41,10 @@ function Signup() {
         setPassword("");
         setContactNumber("");
         setCompanyName("");
+
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
       }
     } catch (error) {
       alert("Email already exist");
@@ -162,6 +169,17 @@ function Signup() {
                 >
                   Sign up
                 </button>
+              </div>
+              <div className="flex justify-center mt-6">
+                <NavLink
+                  to="/"
+                  className="flex items-center gap-1 text-sm text-gray-400 hover:text-violet-500 transition-colors duration-200 group"
+                >
+                  <span>Already have an account?</span>
+                  <span className="text-violet-500 font-semibold group-hover:underline">
+                    Sign in
+                  </span>
+                </NavLink>
               </div>
             </form>
           </div>
