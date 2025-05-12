@@ -35,6 +35,7 @@ services:
       DB_PORT: 5432
       JWT_SECRET: 09fb85c4aa1408b76c8bad23b748be9435334c03a5e9e76114378f4ecf7532f5
       JWT_EXPIRES_IN: 1d
+      SUPABASE_JWT_SECRET: cdruRdq/KYzY+ixdN/kIcWt9RvpkgQZiXp1IFCFibPMOVKm5yE+0LkJQBZfP4L94CgXYcT1B1n8AIaNvXkyPwA==
 
   database:
     image: postgres:13
