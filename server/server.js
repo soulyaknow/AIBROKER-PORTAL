@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const authRoutes = require("./routes/authRoutes");
+const { verifySupabaseToken } = require("./middleware/supabaseAuth");
 
 const app = express();
 
@@ -23,6 +24,11 @@ app.use("/api", authRoutes);
 // Default route
 app.get("/", (req, res) => {
   res.send("Backend is running on port");
+});
+
+// 🔒 Protected route using Supabase JWT
+app.get("/api/protected", verifySupabaseToken, (req, res) => {
+  res.json({ message: "Secure data", user: req.user });
 });
 
 // Start the server

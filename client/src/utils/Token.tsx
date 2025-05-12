@@ -1,7 +1,7 @@
-export const getToken = () => sessionStorage.getItem("token");
+export const getToken = () => localStorage.getItem("token");
 
 export const removeToken = (): string | null => {
-  const token = sessionStorage.getItem("token");
-  sessionStorage.removeItem("token");
+  const token = localStorage.getItem("token");
+  localStorage.removeItem("token");
   return token;
 };

@@ -20,20 +20,21 @@ function Signin() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await signin(email, password);
+      // Expecting a string here (the token)
+      const token = await signin(email, password);
 
-      if (response?.token) {
-        const token = response.token;
-        sessionStorage.setItem("token", token);
+      if (token) {
+        localStorage.setItem("token", token);
 
         setEmailPassword(email, password, rememberMe);
 
         navigate("/dashboard", { replace: true });
       } else {
         console.error("No token received from server.");
+        alert("Failed to sign in. Please check your credentials.");
       }
     } catch (error) {
-      console.error("Invalid username or password.", error);
+      console.error("Signin error:", error);
       alert("Invalid username or password.");
     }
   };
