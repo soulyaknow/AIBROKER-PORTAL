@@ -9,13 +9,14 @@ services:
     networks:
       - app-network
     environment:
-      VITE_APPLICATION_HUB_URL="https://ai-broker.korunaassist.com/fusion/v1/datasheets/dstLr3xUL37tbn2Sud/records"
-      VITE_BROKER_HUB_URL="https://ai-broker.korunaassist.com/fusion/v1/datasheets/dstuqAhBamoBAzziwt/records"
-      VITE_APPLICANT_HUB_URL="https://ai-broker.korunaassist.com/fusion/v1/datasheets/dst1vag1MekDBbrzoS/records"
-      VITE_SUPABASE_URL="https://mnetrjppwvyhdhhwkaby.supabase.co"
-      VITE_SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uZXRyanBwd3Z5aGRoaHdrYWJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY5Mzc2MzMsImV4cCI6MjA2MjUxMzYzM30.vBDHytbLEg4y--lcGOfW7-Re7DI8ZLRV4nwGtXSO-ZI"
-      VITE_API_TOKEN="usk5YzjFkoAuRfYFNcPCM0j"
+      VITE_APPLICATION_HUB_URL=https://ai-broker.korunaassist.com/fusion/v1/datasheets/dstLr3xUL37tbn2Sud/records
+      VITE_BROKER_HUB_URL=https://ai-broker.korunaassist.com/fusion/v1/datasheets/dstuqAhBamoBAzziwt/records
+      VITE_APPLICANT_HUB_URL=https://ai-broker.korunaassist.com/fusion/v1/datasheets/dst1vag1MekDBbrzoS/records
+      VITE_SUPABASE_URL=https://mnetrjppwvyhdhhwkaby.supabase.co
+      VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uZXRyanBwd3Z5aGRoaHdrYWJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY5Mzc2MzMsImV4cCI6MjA2MjUxMzYzM30.vBDHytbLEg4y--lcGOfW7-Re7DI8ZLRV4nwGtXSO-ZI
+      VITE_API_TOKEN=usk5YzjFkoAuRfYFNcPCM0j
       VITE_API_URL=http://localhost:1500/api
+      VITE_ALLOWED_NETWORKS=www.ai-broker.ai,localhost
 
   server:
     build:

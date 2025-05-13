@@ -1,4 +1,4 @@
-import { supabase } from "../../utils/supabaseClient";
+import { supabase } from "../../utils/SupabaseClient";
 
 // 🔐 Signup function
 export const signup = async ({
