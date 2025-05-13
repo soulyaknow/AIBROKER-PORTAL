@@ -1,5 +1,7 @@
 import { supabase } from "../../utils/SupabaseClient";
 
+// Fix the File name
+
 // 🔐 Signup function
 export const signup = async ({
   email,
