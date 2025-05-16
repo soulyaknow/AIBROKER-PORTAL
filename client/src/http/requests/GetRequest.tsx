@@ -1,9 +1,11 @@
 import axios from "axios";
+import { getToken } from "../../utils/Token";
 
 const application_hub_url = import.meta.env.VITE_APPLICATION_HUB_URL;
 const broker_hub_url = import.meta.env.VITE_BROKER_HUB_URL;
 const applicant_hub_url = import.meta.env.VITE_APPLICANT_HUB_URL;
 const api_token = import.meta.env.VITE_API_TOKEN;
+const backend_url = import.meta.env.VITE_API_URL;
 
 const getBroker = async (broker_id: string) => {
   try {
@@ -22,8 +24,7 @@ const getBroker = async (broker_id: string) => {
 
     return brokerData;
   } catch (error) {
-    console.error("Error fetching broker data:", error);
-    throw error;
+    console.error("Error fetching broker data:");
   }
 };
 
@@ -45,8 +46,7 @@ const getApplicant = async (applicant_ids: string[]) => {
 
     return applicantsData;
   } catch (error) {
-    console.error("Error fetching applicant data:", error);
-    throw error;
+    console.error("Error fetching applicant data:");
   }
 };
 
@@ -83,7 +83,26 @@ export const getApplication = async () => {
 
     return { structure_data };
   } catch (error) {
-    console.error("Error fetching application data:", error);
-    throw error;
+    console.error("Error fetching application data:");
+  }
+};
+
+export const getUser = async () => {
+  const token = getToken();
+  try {
+    const res = await axios.get(`${backend_url}/user`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (res?.data) {
+      return res.data;
+    } else {
+      throw new Error("No user data received.");
+    }
+  } catch (err: any) {
+    const errorMessage = err.response?.data?.error || "Failed to get user";
+    throw new Error(errorMessage);
   }
 };

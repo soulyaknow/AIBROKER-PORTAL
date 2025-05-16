@@ -1,13 +1,19 @@
 import React, { useEffect, useState, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import { getToken, removeToken } from "../../utils/Token";
-import { UserRound } from "lucide-react";
+import { Pen, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import UsersSettings from "../modal/UsersSettings";
+import { getUser } from "../../http/requests/GetRequest";
 
 function Navbar() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [fullName, setFullName] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [profileUrl, setProfileUrl] = useState<string | null>(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,19 +21,54 @@ function Navbar() {
     setIsAuthenticated(!!token);
   }, []);
 
-  // Close dropdown if clicked outside
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setDropdownOpen(false);
-      }
+    const token = getToken();
+    if (!token) return;
+
+    // Initial load of user data
+    getUser()
+      .then((user) => {
+        setIsAuthenticated(true);
+        setFullName(user.full_name || "");
+        setProfileUrl(user.profile_image || null);
+      })
+      .catch(() => {
+        setIsAuthenticated(false);
+        setFullName("");
+        setProfileUrl(null);
+      });
+
+    // Listen for profile updates
+    const handleProfileUpdated = () => {
+      getUser()
+        .then((user) => {
+          setProfileUrl(user.profile_image || null);
+        })
+        .catch(() => {
+          setProfileUrl(null);
+        });
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+
+    window.addEventListener("profile-updated", handleProfileUpdated);
+
+    return () => {
+      window.removeEventListener("profile-updated", handleProfileUpdated);
+    };
   }, []);
+
+  // Close dropdown if clicked outside
+  // useEffect(() => {
+  //   const handleClickOutside = (event: MouseEvent) => {
+  //     if (
+  //       dropdownRef.current &&
+  //       !dropdownRef.current.contains(event.target as Node)
+  //     ) {
+  //       setDropdownOpen(false);
+  //     }
+  //   };
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   return () => document.removeEventListener("mousedown", handleClickOutside);
+  // }, []);
 
   const handleLogout = () => {
     removeToken();
@@ -103,15 +144,65 @@ function Navbar() {
                 <button
                   onClick={() => setDropdownOpen((prev) => !prev)}
                   className="border-2 border-violet-400 cursor-pointer rounded-3xl p-1 bg-black"
+                  aria-haspopup="true"
+                  aria-expanded={dropdownOpen}
                 >
-                  <UserRound className="text-violet-700 font-bold" size={20} />
+                  <img
+                    src={profileUrl || "/profile-pic.jpg"}
+                    alt="Profile Icon"
+                    className="w-7 h-7 rounded-full"
+                  />
                 </button>
 
                 {dropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-40 bg-white border  rounded-md shadow-lg z-50">
+                  <div className="absolute right-0 mt-2 w-60 bg-gray-950 border border-gray-800 rounded-md shadow-lg z-50 px-4 py-3">
+                    {/* Profile Section */}
+                    <div className="flex items-center gap-3 mb-4 bg-gray-600 p-2 rounded-md">
+                      <img
+                        src={profileUrl || "/profile-pic.jpg"}
+                        alt="Profile Icon"
+                        className="w-10 h-10 rounded-full bg-white"
+                      />
+                      <div className="text-white">
+                        <h2 className="font-medium">
+                          {fullName || "Client Name"}
+                        </h2>
+                        <span className="text-sm text-gray-300">
+                          Username/ID
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Account Type */}
+                    <button className="w-full text-left py-2 text-sm text-white hover:bg-gray-600 font-medium cursor-pointer flex justify-between items-center px-3 rounded-3xl">
+                      <span>Account type</span>
+                      <span className="rounded-2xl bg-green-300 text-black px-2">
+                        Free
+                      </span>
+                    </button>
+
+                    {/* User Profile */}
+                    <button
+                      className="w-full text-left py-2 text-sm text-white hover:bg-gray-600 font-medium cursor-pointer flex justify-between items-center px-3 rounded-3xl"
+                      onClick={() => setIsModalOpen(true)}
+                    >
+                      <span>User Profile</span>
+                      <Pen className="ml-2" size={16} />
+                    </button>
+
+                    {/* Settings */}
+                    <button className="w-full text-left py-2 text-sm text-white hover:bg-gray-600 font-medium cursor-pointer flex justify-between items-center px-3 rounded-3xl">
+                      <span>Settings & Privacy</span>
+                      <Settings className="ml-2" size={16} />
+                    </button>
+
+                    {/* Divider */}
+                    <div className="my-2 border-t border-gray-500"></div>
+
+                    {/* Logout */}
                     <button
                       onClick={handleLogout}
-                      className="w-full text-left px-4 py-2 text-sm text-violet-600 hover:bg-violet-600 hover:border hover:rounded-md font-semibold hover:text-white cursor-pointer"
+                      className="w-full text-left py-2 text-sm text-white hover:bg-gray-600 font-medium cursor-pointer px-3 rounded-3xl"
                     >
                       Logout
                     </button>
@@ -122,6 +213,12 @@ function Navbar() {
           )}
         </div>
       </div>
+      {isModalOpen && (
+        <UsersSettings
+          onClose={() => setIsModalOpen(false)}
+          profile={profileUrl}
+        />
+      )}
     </nav>
   );
 }

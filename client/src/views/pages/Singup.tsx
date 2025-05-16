@@ -11,6 +11,8 @@ import {
 import Navbar from "../components/Navbar";
 import { signup } from "../../http/requests/PostRequest";
 import { NavLink, useNavigate } from "react-router-dom";
+import ChatBot from "../components/ChatBot";
+import Swal from "sweetalert2";
 
 function Signup() {
   const [fullName, setFullName] = useState("");
@@ -35,19 +37,29 @@ function Signup() {
       const response = await signup(payload);
 
       if (response) {
-        alert("Signup successful");
+        await Swal.fire({
+          icon: "success",
+          title: "Signup Successful!",
+          text: "Welcome aboard! Redirecting you to the login page...",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+
         setFullName("");
         setEmail("");
         setPassword("");
         setContactNumber("");
         setCompanyName("");
 
-        setTimeout(() => {
-          navigate("/");
-        }, 2000);
+        navigate("/");
       }
     } catch (error) {
-      alert("Email already exist");
+      console.log(error);
+      await Swal.fire({
+        icon: "error",
+        title: "Signup Failed",
+        text: "Something went wrong. Please try again.",
+      });
     }
   };
 
@@ -185,6 +197,8 @@ function Signup() {
           </div>
         </div>
       </main>
+
+      <ChatBot />
     </div>
   );
 }

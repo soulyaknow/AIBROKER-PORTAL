@@ -12,8 +12,6 @@ services:
       VITE_APPLICATION_HUB_URL=https://ai-broker.korunaassist.com/fusion/v1/datasheets/dstLr3xUL37tbn2Sud/records
       VITE_BROKER_HUB_URL=https://ai-broker.korunaassist.com/fusion/v1/datasheets/dstuqAhBamoBAzziwt/records
       VITE_APPLICANT_HUB_URL=https://ai-broker.korunaassist.com/fusion/v1/datasheets/dst1vag1MekDBbrzoS/records
-      VITE_SUPABASE_URL=https://mnetrjppwvyhdhhwkaby.supabase.co
-      VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uZXRyanBwd3Z5aGRoaHdrYWJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY5Mzc2MzMsImV4cCI6MjA2MjUxMzYzM30.vBDHytbLEg4y--lcGOfW7-Re7DI8ZLRV4nwGtXSO-ZI
       VITE_API_TOKEN=usk5YzjFkoAuRfYFNcPCM0j
       VITE_API_URL=http://localhost:1500/api
       VITE_ALLOWED_NETWORKS=www.ai-broker.ai,localhost
@@ -26,30 +24,11 @@ services:
       - "1500:1500"
     networks:
       - app-network
-    depends_on:
-      - database
     environment:
-      DB_HOST: database
-      DB_USER: postgres
-      DB_PASSWORD: soulyaknow30
-      DB_NAME: brokerportal
-      DB_PORT: 5432
-      JWT_SECRET: 09fb85c4aa1408b76c8bad23b748be9435334c03a5e9e76114378f4ecf7532f5
-      JWT_EXPIRES_IN: 1d
-      SUPABASE_JWT_SECRET: cdruRdq/KYzY+ixdN/kIcWt9RvpkgQZiXp1IFCFibPMOVKm5yE+0LkJQBZfP4L94CgXYcT1B1n8AIaNvXkyPwA==
-
-  database:
-    image: postgres:13
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: soulyaknow30
-      POSTGRES_DB: brokerportal
-    ports:
-      - "5432:5432"
-    networks:
-      - app-network
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+      PORT=1500
+      SUPABASE_JWT_SECRET=jFjyofunqW7KWHRYttGEDamQR5Ji0KyhEQXFi55Yz+D4l+xoAB3JdKowr5A0SJgQ+7w8afrCuyyK16rfwcbOjA==
+      SUPABASE_URL=https://vlerrnqmspoofrturhwc.supabase.co
+      SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsZXJybnFtc3Bvb2ZydHVyaHdjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NzE4NDM2NiwiZXhwIjoyMDYyNzYwMzY2fQ.ILvBkflxLyeax7lyWkyl5-pDX6JgSGsRZ6z19mapI-E
 
 networks:
   app-network:

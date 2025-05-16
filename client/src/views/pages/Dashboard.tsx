@@ -1,6 +1,7 @@
 import React from "react";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
+import ChatBot from "../components/ChatBot";
 
 function Dashboard() {
   return (
@@ -86,6 +87,9 @@ function Dashboard() {
           </div>
         </div>
       </main>
+
+      {/* Chat bot */}
+      <ChatBot />
 
       {/* Footer */}
       <Footer />

@@ -1,6 +1,6 @@
-import { supabase } from "../../utils/SupabaseClient";
+import axios from "axios";
 
-// Fix the File name
+const backend_url = import.meta.env.VITE_API_URL;
 
 // 🔐 Signup function
 export const signup = async ({
@@ -16,60 +16,61 @@ export const signup = async ({
   contactNumber: string;
   companyName: string;
 }) => {
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        full_name: fullName,
-        contact_number: contactNumber,
-        company_name: companyName,
-      },
-    },
-  });
+  try {
+    const res = await axios.post(`${backend_url}/signup`, {
+      email,
+      password,
+      fullName,
+      contactNumber,
+      companyName,
+    });
 
-  if (error) throw error;
-  return data;
+    return res.data;
+  } catch (err: any) {
+    const errorMessage = err.response?.data?.error || "Signup failed";
+    throw new Error(errorMessage);
+  }
 };
 
 // 🔐 Signin function
-export const signin = async (
-  email: string,
-  password: string
-): Promise<string> => {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if (error) throw error;
-
-  // Ensure that data.session contains an access_token
-  if (data?.session?.access_token) {
-    return data.session.access_token; // Return only the token as a string
-  } else {
-    throw new Error("No access token found.");
+export const signin = async ({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) => {
+  try {
+    const res = await axios.post(`${backend_url}/signin`, {
+      email,
+      password,
+    });
+    if (res.data?.access_token) {
+      return res.data;
+    } else {
+      throw new Error("No access token received.");
+    }
+  } catch (err: any) {
+    const errorMessage = err.response?.data?.error || "Signin failed";
+    throw new Error(errorMessage);
   }
 };
 
-// 🔐 Example: Call a protected route
-export const getProtectedData = async () => {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+// Upload function
+export const upload = async (file: File, token: string) => {
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
 
-  const token = session?.access_token;
-  if (!token) throw new Error("No access token available");
-
-  const res = await fetch("http://localhost:1500/api/protected", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch protected data");
+    const res = await axios.post(`${backend_url}/upload`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return res.data;
+  } catch (err: any) {
+    const errorMessage = err.res?.data?.error || "Uploading failed";
+    throw new Error(errorMessage);
   }
-
-  return res.json();
 };

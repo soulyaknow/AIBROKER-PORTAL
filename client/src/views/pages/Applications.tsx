@@ -10,6 +10,7 @@ import SubmissionModal from "../modal/SubmissionModal";
 import PostSubmissionModal from "../modal/PostSubmissionStage";
 import SettlementModal from "../modal/SettlementModal";
 import PostSettlementModal from "../modal/PostSettlementModal";
+import ChatBot from "../components/ChatBot";
 
 interface FileItem {
   id: string;
@@ -382,6 +383,9 @@ function Applications() {
           </div>
         </div>
       </main>
+
+      <ChatBot />
+
       <Footer />
 
       {/* Application Modal */}

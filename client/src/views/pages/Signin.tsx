@@ -7,6 +7,8 @@ import { signin } from "../../http/requests/PostRequest";
 import { useNavigate } from "react-router-dom";
 import { setEmailPassword, getEmail, getPassword } from "../../utils/Cookies";
 import { NavLink } from "react-router-dom";
+import ChatBot from "../components/ChatBot";
+import Swal from "sweetalert2";
 
 function Signin() {
   const [email, setEmail] = useState("");
@@ -20,22 +22,38 @@ function Signin() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Expecting a string here (the token)
-      const token = await signin(email, password);
+      const payload = { email, password };
+      const { access_token, user } = await signin(payload);
 
-      if (token) {
-        localStorage.setItem("token", token);
+      if (access_token) {
+        localStorage.setItem("token", access_token);
+        localStorage.setItem("full_name", user.user_metadata.full_name);
+        localStorage.setItem("created_at", user.created_at);
 
         setEmailPassword(email, password, rememberMe);
 
+        // Show success alert
+        await Swal.fire({
+          icon: "success",
+          title: "Signed in successfully!",
+          text: `Welcome back, ${user.user_metadata.full_name}!`,
+          confirmButtonText: "Continue",
+        });
+
+        // Then navigate after user clicks "Continue"
         navigate("/dashboard", { replace: true });
       } else {
         console.error("No token received from server.");
         alert("Failed to sign in. Please check your credentials.");
       }
     } catch (error) {
-      console.error("Signin error:", error);
-      alert("Invalid username or password.");
+      // Show error alert
+      await Swal.fire({
+        icon: "error",
+        title: "Sign-in Failed",
+        text: "Invalid email or password. Please try again.",
+        confirmButtonText: "OK",
+      });
     }
   };
 
@@ -155,6 +173,9 @@ function Signin() {
           </div>
         </div>
       </main>
+
+      <ChatBot />
+
       <Footer />
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
