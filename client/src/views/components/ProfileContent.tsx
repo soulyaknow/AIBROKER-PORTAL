@@ -11,6 +11,14 @@ import {
   Settings,
   CircleGauge,
   RotateCw,
+  Sun,
+  Moon,
+  CaseSensitive,
+  Languages,
+  Map,
+  Calendar1,
+  CalendarClock,
+  Globe,
 } from "lucide-react";
 import ToggleSwitch from "./ToggleComponent";
 
@@ -40,6 +48,8 @@ function ProfileContent({
   activeTab,
 }: ProfileContentProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [textSize, setTextSize] = useState("Medium");
   const [toggles, setToggles] = useState({
     drive: true,
     slack: true,
@@ -71,6 +81,11 @@ function ProfileContent({
 
   const handleEditClick = () => {
     setIsEditing(!isEditing);
+  };
+
+  const handleToggleTheme = () => {
+    setIsDarkMode((prev) => !prev);
+    // You can also apply a class to `<html>` or use context to persist this
   };
 
   return (
@@ -203,14 +218,14 @@ function ProfileContent({
             <div className="flex justify-end gap-4 pt-4">
               <button
                 type="button"
-                className="px-8 py-2 bg-gray-300 text-gray-800 rounded-full hover:bg-gray-400 cursor-pointer"
+                className="px-10 py-1 bg-gray-300 text-gray-800 rounded-full hover:bg-gray-400 cursor-pointer"
                 onClick={onClose}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-8 py-2 bg-violet-600 text-white rounded-full hover:bg-violet-800 shadow-md cursor-pointer"
+                className="px-10 py-1 bg-violet-600 text-white rounded-full hover:bg-violet-800 shadow-md cursor-pointer"
                 disabled={!isEditing}
               >
                 Save
@@ -372,9 +387,146 @@ function ProfileContent({
       )}
 
       {activeTab === "Accessibility & Display" && (
-        <div>
-          <h2 className="text-xl font-bold">Accessibility & Display</h2>
-          <p>Billing and subscription details go here.</p>
+        <div className="space-y-4">
+          <div className="flex flex-col space-y-2">
+            <h2 className="text-xl font-bold text-violet-800">
+              Accessibility & Display
+            </h2>
+            <p className="text-gray-600">
+              Customise your application in ways that work best for you.
+            </p>
+            <hr className="border-violet-600" />
+          </div>
+
+          {/* Theme Switches */}
+          <div className="flex flex-col w-full space-y-2">
+            <h3 className="text-lg font-semibold">Theme & UI</h3>
+            <div className="border border-violet-500 rounded-xl divide-y divide-violet-300">
+              {/* Light Mode */}
+              <div className="flex items-center justify-between p-4">
+                <div className="flex items-center space-x-2">
+                  <Sun className="text-yellow-500" />
+                  <span className="text-sm font-medium">Light Mode</span>
+                </div>
+                <ToggleSwitch
+                  isOn={!isDarkMode}
+                  onToggle={() => setIsDarkMode(false)}
+                />
+              </div>
+
+              {/* Dark Mode */}
+              <div className="flex items-center justify-between p-4">
+                <div className="flex items-center space-x-2">
+                  <Moon className="text-purple-700" />
+                  <span className="text-sm font-medium">Dark Mode</span>
+                </div>
+                <ToggleSwitch
+                  isOn={isDarkMode}
+                  onToggle={() => setIsDarkMode(true)}
+                />
+              </div>
+            </div>
+
+            {/* Text Size */}
+            <div className="border border-violet-500 rounded-xl p-2 px-4 flex items-center justify-between">
+              {/* Label */}
+              <div className="flex items-center space-x-2">
+                <span className="font-medium flex items-center space-x-2 text-sm">
+                  <span className="inline-block bg-black text-white text-sm p-1 rounded">
+                    <CaseSensitive className="h-4 w-4" />
+                  </span>
+                  <span>Text Size</span>
+                </span>
+              </div>
+
+              {/* Buttons */}
+              <div className="flex space-x-2">
+                {["Small", "Medium", "Large"].map((size) => (
+                  <button
+                    key={size}
+                    className={`px-4 py-1 rounded-lg text-sm font-medium border 
+                    ${
+                      textSize === size
+                        ? "bg-gradient-to-r from-purple-400 to-violet-600 text-white border-violet-500"
+                        : "bg-gray-200 text-black border-gray-300 hover:bg-gray-300"
+                    }`}
+                    onClick={() => setTextSize(size)}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Language & Region */}
+          <div className="flex flex-col space-y-4">
+            <h3 className="text-lg font-semibold">Language & Region</h3>
+            <div className="border border-violet-800 divide-y divide-violet-800 flex flex-col rounded-md overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3">
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <Languages />
+                  <span>Preferred Language</span>
+                </div>
+                <button className="text-violet-800 font-medium text-sm">
+                  English
+                </button>
+              </div>
+              <div className="flex items-center justify-between px-4 py-3">
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <Map />
+                  <span>Region</span>
+                </div>
+                <button className="text-violet-800 font-medium text-sm">
+                  Philippines
+                </button>
+              </div>
+              <div className="flex items-center justify-between px-4 py-3">
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <Calendar1 />
+                  <span>Calendar</span>
+                </div>
+                <button className="text-violet-800 font-medium text-sm">
+                  Gregorian
+                </button>
+              </div>
+              <div className="flex items-center justify-between px-4 py-3">
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <CalendarClock />
+                  <span>Date Format</span>
+                </div>
+                <button className="text-violet-800 font-medium text-sm">
+                  05/15/2025
+                </button>
+              </div>
+              <div className="flex items-center justify-between px-4 py-3">
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <Globe />
+                  <span>Time Zone</span>
+                </div>
+                <button className="text-violet-800 font-medium text-sm">
+                  Philippine Standard Time (PST)
+                </button>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-4 pt-4">
+              <button
+                type="button"
+                className="px-10 py-1 bg-gray-300 text-gray-800 rounded-full hover:bg-gray-400 cursor-pointer"
+                onClick={onClose}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-10 py-1 bg-violet-600 text-white rounded-full hover:bg-violet-800 shadow-md cursor-pointer"
+                disabled={!isEditing}
+              >
+                Save
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

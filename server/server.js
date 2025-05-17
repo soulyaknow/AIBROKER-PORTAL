@@ -12,10 +12,19 @@ const app = express();
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
+// Local and Production
+const allowedOrigins = ["http://localhost:1499", "https://www.ai-broker.ai"];
+
 // CORS setup
 app.use(
   cors({
-    origin: "http://localhost:1499",
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
