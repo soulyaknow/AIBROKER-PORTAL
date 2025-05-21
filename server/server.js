@@ -3,6 +3,7 @@ const cors = require("cors");
 require("dotenv").config();
 const authRoutes = require("./routes/authRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
+const updateRoutes = require("./routes/updateRoutes");
 const { verifySupabaseToken } = require("./middleware/supabaseAuth");
 const path = require("path");
 
@@ -32,6 +33,7 @@ app.use(
 // API routes
 app.use("/api", authRoutes);
 app.use("/api", uploadRoutes);
+app.use("/api", updateRoutes);
 app.use("/images", express.static(path.join(__dirname, "images")));
 
 // Default route

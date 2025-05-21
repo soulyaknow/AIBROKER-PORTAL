@@ -21,6 +21,9 @@ import {
   Globe,
 } from "lucide-react";
 import ToggleSwitch from "./ToggleComponent";
+import { editProfile } from "../../http/requests/PostRequest";
+import { getToken } from "../../utils/Token";
+import { toast } from "react-toastify";
 
 interface ProfileContentProps {
   onClose: () => void;
@@ -60,6 +63,9 @@ function ProfileContent({
     throttling: true,
     retry: false,
   });
+  const [saving, setSaving] = useState(false);
+  const [username, setUsername] = useState("");
+  const [accountType, setAccountType] = useState("");
 
   type ToggleKeys = keyof typeof toggles;
 
@@ -71,6 +77,36 @@ function ProfileContent({
     { name: "Gmail", logo: "/logos_google-gmail.svg", key: "gmail" },
     { name: "Dropbox", logo: "/logos_dropbox.svg", key: "dropbox" },
   ];
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isEditing) return;
+
+    try {
+      setSaving(true);
+      const token = getToken();
+
+      if (!token) {
+        toast.error("Authentication token is missing.");
+        return;
+      }
+
+      const payload = {
+        name,
+        email,
+        username,
+        account_type: accountType,
+      };
+
+      await editProfile(payload, token);
+      toast.success("Profile updated");
+      setIsEditing(false);
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const handleToggle = (key: ToggleKeys) => {
     setToggles((prev) => ({
@@ -132,7 +168,7 @@ function ProfileContent({
           </div>
 
           {/* Form Fields */}
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label className="block text-sm font-medium mb-1">Name</label>
               <input
@@ -163,6 +199,8 @@ function ProfileContent({
               </label>
               <input
                 type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 className="w-full border border-violet-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-violet-400"
                 disabled={!isEditing}
               />
@@ -192,6 +230,8 @@ function ProfileContent({
               </div>
               <input
                 type="text"
+                value={accountType}
+                onChange={(e) => setAccountType(e.target.value)}
                 className="w-full border border-violet-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-violet-400"
                 disabled={!isEditing}
               />

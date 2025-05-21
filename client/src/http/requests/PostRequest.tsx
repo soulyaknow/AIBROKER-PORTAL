@@ -74,3 +74,17 @@ export const upload = async (file: File, token: string) => {
     throw new Error(errorMessage);
   }
 };
+
+export const editProfile = async (payload: object, token: string) => {
+  try {
+    const { data } = await axios.post(`${backend_url}/editProfile`, payload, {
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return data;
+  } catch (err: any) {
+    throw new Error(err?.response?.data?.error || "Error editing profile");
+  }
+};

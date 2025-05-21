@@ -28,6 +28,7 @@ function Navbar() {
     // Initial load of user data
     getUser()
       .then((user) => {
+        console.log(user);
         setIsAuthenticated(true);
         setFullName(user.full_name || "");
         setProfileUrl(user.profile_image || null);
