@@ -11,8 +11,12 @@ function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [profileUrl, setProfileUrl] = useState<string | null>(null);
+  const [username, setUsername] = useState("");
+  const [account_type, setAccountType] = useState("");
+  const [date, setDate] = useState("");
 
   const navigate = useNavigate();
 
@@ -31,7 +35,11 @@ function Navbar() {
         console.log(user);
         setIsAuthenticated(true);
         setFullName(user.full_name || "");
+        setEmail(user.email || "");
+        setUsername(user.username || "");
+        setAccountType(user.account_type || "");
         setProfileUrl(user.profile_image || null);
+        setDate(user.created_at || "");
       })
       .catch(() => {
         setIsAuthenticated(false);
@@ -178,7 +186,7 @@ function Navbar() {
                     <button className="w-full text-left py-2 text-sm text-white hover:bg-gray-600 font-medium cursor-pointer flex justify-between items-center px-3 rounded-3xl">
                       <span>Account type</span>
                       <span className="rounded-2xl bg-green-300 text-black px-2">
-                        Free
+                        {account_type}
                       </span>
                     </button>
 
@@ -218,6 +226,11 @@ function Navbar() {
         <UsersSettings
           onClose={() => setIsModalOpen(false)}
           profile={profileUrl}
+          fullname={fullName}
+          email={email}
+          username={username}
+          account_type={account_type}
+          date={date}
         />
       )}
     </nav>

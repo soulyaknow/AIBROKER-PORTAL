@@ -32,6 +32,10 @@ interface ProfileContentProps {
   setName: React.Dispatch<React.SetStateAction<string>>;
   email: string;
   setEmail: React.Dispatch<React.SetStateAction<string>>;
+  username: string;
+  setUser: React.Dispatch<React.SetStateAction<string>>;
+  type: string;
+  setType: React.Dispatch<React.SetStateAction<string>>;
   dateCreated: string;
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   imagePreview: string | null;
@@ -45,6 +49,10 @@ function ProfileContent({
   setName,
   email,
   setEmail,
+  username,
+  setUser,
+  type,
+  setType,
   dateCreated,
   handleFileChange,
   imagePreview,
@@ -64,8 +72,6 @@ function ProfileContent({
     retry: false,
   });
   const [saving, setSaving] = useState(false);
-  const [username, setUsername] = useState("");
-  const [accountType, setAccountType] = useState("");
 
   type ToggleKeys = keyof typeof toggles;
 
@@ -95,7 +101,7 @@ function ProfileContent({
         name,
         email,
         username,
-        account_type: accountType,
+        account_type: type,
       };
 
       await editProfile(payload, token);
@@ -200,7 +206,7 @@ function ProfileContent({
               <input
                 type="text"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => setUser(e.target.value)}
                 className="w-full border border-violet-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-violet-400"
                 disabled={!isEditing}
               />
@@ -230,10 +236,10 @@ function ProfileContent({
               </div>
               <input
                 type="text"
-                value={accountType}
-                onChange={(e) => setAccountType(e.target.value)}
+                value={type}
+                onChange={(e) => setType(e.target.value)}
                 className="w-full border border-violet-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-violet-400"
-                disabled={!isEditing}
+                disabled
               />
             </div>
 

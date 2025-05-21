@@ -27,8 +27,8 @@ function Signin() {
 
       if (access_token) {
         localStorage.setItem("token", access_token);
-        localStorage.setItem("full_name", user.user_metadata.full_name);
-        localStorage.setItem("created_at", user.created_at);
+        // localStorage.setItem("full_name", user.user_metadata.full_name);
+        // localStorage.setItem("created_at", user.created_at);
 
         setEmailPassword(email, password, rememberMe);
 

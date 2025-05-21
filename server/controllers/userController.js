@@ -107,6 +107,7 @@ exports.users = async (req, res) => {
       profile_image: profileData?.images || profileFromMetadata || null,
       username: profileData?.username || null,
       account_type: profileData?.account_type || null,
+      created_at: user.created_at,
     });
   } catch (err) {
     console.error(err);

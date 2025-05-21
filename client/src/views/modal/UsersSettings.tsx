@@ -1,30 +1,39 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { getToken } from "../../utils/Token";
-import { jwtDecode } from "jwt-decode";
 import { upload } from "../../http/requests/PostRequest";
 import ProfileContent from "../components/ProfileContent";
-
-interface JwtPayload {
-  email: string;
-  user_metadata?: {
-    full_name?: string;
-  };
-}
 
 interface UsersSettingsProps {
   onClose: () => void;
   profile: string | null;
+  fullname: string | null;
+  email: string | null;
+  username: string | null;
+  account_type: string | null;
+  date: string | null;
 }
 
-function UsersSettings({ onClose, profile }: UsersSettingsProps) {
+function UsersSettings({
+  onClose,
+  profile,
+  fullname,
+  email,
+  username,
+  account_type,
+  date,
+}: UsersSettingsProps) {
   const modalRef = useRef<HTMLDivElement>(null);
   const token = getToken();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
   const [dateCreated, setDateCreated] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("User Profile");
+
+  // NEW: Local state for editable name and email
+  const [name, setName] = useState(fullname || "");
+  const [userEmail, setUserEmail] = useState(email || "");
+  const [user, setUser] = useState(username || "");
+  const [type, setType] = useState(account_type || "");
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -47,24 +56,17 @@ function UsersSettings({ onClose, profile }: UsersSettingsProps) {
   };
 
   useEffect(() => {
-    if (token) {
-      const decoded = jwtDecode<JwtPayload>(token);
-      setEmail(decoded.email || "");
-      setName(decoded.user_metadata?.full_name || "");
-
-      const createdAt = localStorage.getItem("created_at");
-      if (createdAt) {
-        const date = new Date(createdAt);
-        setDateCreated(
-          date.toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })
-        );
-      }
+    if (token && date) {
+      const date_created = new Date(date);
+      setDateCreated(
+        date_created.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })
+      );
     }
-  }, [token]);
+  }, [token, date]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -125,8 +127,12 @@ function UsersSettings({ onClose, profile }: UsersSettingsProps) {
             profile={profile}
             name={name}
             setName={setName}
-            email={email}
-            setEmail={setEmail}
+            email={userEmail}
+            setEmail={setUserEmail}
+            username={user}
+            setUser={setUser}
+            type={type}
+            setType={setType}
             dateCreated={dateCreated}
             handleFileChange={handleFileChange}
             imagePreview={imagePreview}
