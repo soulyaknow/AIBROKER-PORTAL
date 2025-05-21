@@ -3,8 +3,6 @@ const { supabase } = require("../middleware/supabaseClient");
 exports.signup = async (req, res) => {
   const { email, password, fullName, contactNumber, companyName } = req.body;
 
-  console.log(req.body);
-
   try {
     const { data, error } = await supabase.auth.admin.createUser({
       email,
@@ -14,8 +12,6 @@ exports.signup = async (req, res) => {
         full_name: fullName,
       },
     });
-
-    console.log(data);
 
     if (error) {
       console.error("Supabase createUser error:", error.message);
