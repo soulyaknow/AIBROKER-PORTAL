@@ -106,3 +106,26 @@ export const getUser = async () => {
     throw new Error(errorMessage);
   }
 };
+
+export const getAllRegions = async () => {
+  try {
+    const { data } = await axios.get(`${backend_url}/region`);
+    // Fix here if data is nested
+    return Array.isArray(data) ? data : data.regions;
+  } catch (err: any) {
+    const errorMessage =
+      err.response?.data?.error || "Failed to get all regions";
+    throw new Error(errorMessage);
+  }
+};
+
+export const getCountryDetails = async (countryName: string) => {
+  try {
+    const { data } = await axios.get(`${backend_url}/country/${countryName}`);
+    return data;
+  } catch (err: any) {
+    const errorMessage =
+      err.response?.data?.error || "Failed to get country details";
+    throw new Error(errorMessage);
+  }
+};

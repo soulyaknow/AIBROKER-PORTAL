@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   client:
     build:
@@ -18,17 +18,17 @@ services:
 
   server:
     build:
-      context: ./server 
+      context: ./server
       dockerfile: Dockerfile
     ports:
       - "1500:1500"
     networks:
       - app-network
-    environment:
-      PORT=1500
+    environment: PORT=1500
       SUPABASE_JWT_SECRET=jFjyofunqW7KWHRYttGEDamQR5Ji0KyhEQXFi55Yz+D4l+xoAB3JdKowr5A0SJgQ+7w8afrCuyyK16rfwcbOjA==
       SUPABASE_URL=https://vlerrnqmspoofrturhwc.supabase.co
       SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsZXJybnFtc3Bvb2ZydHVyaHdjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NzE4NDM2NiwiZXhwIjoyMDYyNzYwMzY2fQ.ILvBkflxLyeax7lyWkyl5-pDX6JgSGsRZ6z19mapI-E
+      REGION_API=https://restcountries.com/v3.1/all
 
 networks:
   app-network:

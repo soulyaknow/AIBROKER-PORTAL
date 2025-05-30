@@ -4,6 +4,7 @@ require("dotenv").config();
 const authRoutes = require("./routes/authRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
 const updateRoutes = require("./routes/updateRoutes");
+const regionRoutes = require("./routes/regionRoutes")
 const { verifySupabaseToken } = require("./middleware/supabaseAuth");
 const path = require("path");
 
@@ -34,6 +35,7 @@ app.use(
 app.use("/api", authRoutes);
 app.use("/api", uploadRoutes);
 app.use("/api", updateRoutes);
+app.use("/api", regionRoutes)
 app.use("/images", express.static(path.join(__dirname, "images")));
 
 // Default route
