@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   CalendarDays,
   Pencil,
@@ -19,11 +19,16 @@ import {
   Calendar1,
   CalendarClock,
   Globe,
+  ChevronsUpDown,
 } from "lucide-react";
 import ToggleSwitch from "./ToggleComponent";
 import { editProfile } from "../../http/requests/PostRequest";
 import { getToken } from "../../utils/Token";
 import { toast } from "react-toastify";
+import {
+  getAllRegions,
+  getCountryDetails,
+} from "../../http/requests/GetRequest";
 
 interface ProfileContentProps {
   onClose: () => void;
@@ -72,6 +77,14 @@ function ProfileContent({
     retry: false,
   });
   const [saving, setSaving] = useState(false);
+  const [regionData, setRegionData] = useState<{
+    country: string;
+    region: string;
+    timezones: string[];
+    date: string;
+  } | null>(null);
+  const [allRegions, setAllRegions] = useState<string[]>([]);
+  const [showRegionDropdown, setShowRegionDropdown] = useState(false);
 
   type ToggleKeys = keyof typeof toggles;
 
@@ -123,6 +136,30 @@ function ProfileContent({
 
   const handleEditClick = () => {
     setIsEditing(!isEditing);
+  };
+
+  useEffect(() => {
+    const fetchRegions = async () => {
+      try {
+        const response = await getAllRegions();
+        setAllRegions(response);
+      } catch (error) {
+        console.error("Failed to fetch regions:", error);
+      }
+    };
+
+    fetchRegions();
+  }, []);
+
+  const handleRegionSelect = async (selectedCountry: string) => {
+    try {
+      const details = await getCountryDetails(selectedCountry);
+      console.log("Selected country details:", details);
+      setRegionData(details);
+      setShowRegionDropdown(false);
+    } catch (error) {
+      console.error("Failed to fetch country details:", error);
+    }
   };
 
   const handleToggleTheme = () => {
@@ -195,7 +232,7 @@ function ProfileContent({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full border border-violet-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-violet-400"
-                disabled={!isEditing}
+                disabled
               />
             </div>
 
@@ -358,7 +395,7 @@ function ProfileContent({
           </div>
 
           {/* Connected Apps */}
-          <div className="flex flex-col w-full space-y-4">
+          <div className="flex flex-col w-full space-y-4 hidden">
             <h3 className="text-lg font-semibold">Your Connected Apps</h3>
             <div className="divide-y divide-violet-800 border border-violet-800 rounded-xl">
               {apps.map((app) => (
@@ -380,7 +417,7 @@ function ProfileContent({
           </div>
 
           {/* Webhooks & Automation */}
-          <div className="flex flex-col w-full space-y-4">
+          <div className="flex flex-col w-full space-y-4 hidden">
             <h3 className="text-lg font-semibold">Webhooks & Automation</h3>
             <div className="border border-violet-800 rounded-xl p-4 space-y-4">
               <div className="flex items-center justify-between">
@@ -399,7 +436,7 @@ function ProfileContent({
           </div>
 
           {/* System Settings */}
-          <div className="flex flex-col w-full space-y-4">
+          <div className="flex flex-col w-full space-y-4 hidden">
             <h3 className="text-lg font-semibold">System Settings</h3>
             <div className="border border-violet-800 rounded-xl p-4 space-y-4">
               <div className="flex items-center justify-between">
@@ -508,7 +545,7 @@ function ProfileContent({
           {/* Language & Region */}
           <div className="flex flex-col space-y-4">
             <h3 className="text-lg font-semibold">Language & Region</h3>
-            <div className="border border-violet-800 divide-y divide-violet-800 flex flex-col rounded-md overflow-hidden">
+            <div className="border border-violet-800 divide-y divide-violet-800 flex flex-col rounded-md">
               <div className="flex items-center justify-between px-4 py-3">
                 <div className="flex items-center gap-2 text-sm font-medium">
                   <Languages />
@@ -523,9 +560,36 @@ function ProfileContent({
                   <Map />
                   <span>Region</span>
                 </div>
-                <button className="text-violet-800 font-medium text-sm">
-                  Philippines
-                </button>
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setShowRegionDropdown((prev) => !prev)}
+                    className="flex items-center gap-1 text-violet-800 font-medium text-sm cursor-pointer"
+                  >
+                    {regionData?.country || "Select Region"}
+                    <ChevronsUpDown className="w-4 h-4" />
+                  </button>
+
+                  {showRegionDropdown && (
+                    <div
+                      className="absolute right-0 mt-2 w-48 bg-white border border-violet-800 rounded-md shadow-lg z-50
+                        max-h-52 overflow-y-auto"
+                    >
+                      {allRegions
+                        .slice()
+                        .sort((a, b) => a.localeCompare(b))
+                        .map((region) => (
+                          <button
+                            key={region}
+                            onClick={() => handleRegionSelect(region)}
+                            className="block w-full text-left px-4 py-2 hover:bg-violet-100 text-sm"
+                          >
+                            {region}
+                          </button>
+                        ))}
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="flex items-center justify-between px-4 py-3">
                 <div className="flex items-center gap-2 text-sm font-medium">
@@ -542,7 +606,7 @@ function ProfileContent({
                   <span>Date Format</span>
                 </div>
                 <button className="text-violet-800 font-medium text-sm">
-                  05/15/2025
+                  {regionData?.date || ""}
                 </button>
               </div>
               <div className="flex items-center justify-between px-4 py-3">
@@ -551,7 +615,7 @@ function ProfileContent({
                   <span>Time Zone</span>
                 </div>
                 <button className="text-violet-800 font-medium text-sm">
-                  Philippine Standard Time (PST)
+                  {regionData?.timezones?.[0] || ""}
                 </button>
               </div>
             </div>
