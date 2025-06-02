@@ -22,12 +22,16 @@ import {
   ChevronsUpDown,
 } from "lucide-react";
 import ToggleSwitch from "./ToggleComponent";
-import { editProfile } from "../../http/requests/PostRequest";
+import {
+  editProfile,
+  saveRegionPreferences,
+} from "../../http/requests/PostRequest";
 import { getToken } from "../../utils/Token";
 import { toast } from "react-toastify";
 import {
   getAllRegions,
   getCountryDetails,
+  getRegionPreferences,
 } from "../../http/requests/GetRequest";
 
 interface ProfileContentProps {
@@ -154,7 +158,6 @@ function ProfileContent({
   const handleRegionSelect = async (selectedCountry: string) => {
     try {
       const details = await getCountryDetails(selectedCountry);
-      console.log("Selected country details:", details);
       setRegionData(details);
       setShowRegionDropdown(false);
     } catch (error) {
@@ -166,6 +169,44 @@ function ProfileContent({
     setIsDarkMode((prev) => !prev);
     // You can also apply a class to `<html>` or use context to persist this
   };
+
+  const handleSaveRegion = async () => {
+    if (!regionData) return;
+
+    const token = getToken();
+
+    if (!token) {
+      toast.error("Authentication token is missing.");
+      return;
+    }
+
+    const success = await saveRegionPreferences(regionData, token);
+    if (success) {
+      toast.success("Region data saved!");
+      setIsEditing(false);
+    }
+  };
+
+  useEffect(() => {
+    const fetchRegion = async () => {
+      const token = getToken();
+      if (!token) return;
+
+      try {
+        const region = await getRegionPreferences(token);
+        setRegionData({
+          country: region.country,
+          region: region.region_name,
+          date: region.date_format,
+          timezones: [region.time_zone], // wrap it in an array to match your usage
+        });
+      } catch (error) {
+        console.error("Failed to load region data:", error);
+      }
+    };
+
+    fetchRegion();
+  }, []);
 
   return (
     <div>
@@ -596,27 +637,27 @@ function ProfileContent({
                   <Calendar1 />
                   <span>Calendar</span>
                 </div>
-                <button className="text-violet-800 font-medium text-sm">
+                <span className="text-violet-800 font-medium text-sm">
                   Gregorian
-                </button>
+                </span>
               </div>
               <div className="flex items-center justify-between px-4 py-3">
                 <div className="flex items-center gap-2 text-sm font-medium">
                   <CalendarClock />
                   <span>Date Format</span>
                 </div>
-                <button className="text-violet-800 font-medium text-sm">
+                <span className="text-violet-800 font-medium text-sm">
                   {regionData?.date || ""}
-                </button>
+                </span>
               </div>
               <div className="flex items-center justify-between px-4 py-3">
                 <div className="flex items-center gap-2 text-sm font-medium">
                   <Globe />
                   <span>Time Zone</span>
                 </div>
-                <button className="text-violet-800 font-medium text-sm">
+                <span className="text-violet-800 font-medium text-sm">
                   {regionData?.timezones?.[0] || ""}
-                </button>
+                </span>
               </div>
             </div>
 
@@ -631,7 +672,7 @@ function ProfileContent({
               <button
                 type="submit"
                 className="px-10 py-1 bg-violet-600 text-white rounded-full hover:bg-violet-800 shadow-md cursor-pointer"
-                disabled={!isEditing}
+                onClick={handleSaveRegion}
               >
                 Save
               </button>

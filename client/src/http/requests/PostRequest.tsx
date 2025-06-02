@@ -88,3 +88,17 @@ export const editProfile = async (payload: object, token: string) => {
     throw new Error(err?.response?.data?.error || "Error editing profile");
   }
 };
+
+export const saveRegionPreferences = async (payload: object, token: string) => {
+  try {
+    const { data } = await axios.post(`${backend_url}/saveRegion`, payload, {
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return data;
+  } catch (err: any) {
+    throw new Error(err?.response?.data?.error || "Error editing profile");
+  }
+};

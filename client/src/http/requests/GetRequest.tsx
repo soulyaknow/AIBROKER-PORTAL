@@ -129,3 +129,20 @@ export const getCountryDetails = async (countryName: string) => {
     throw new Error(errorMessage);
   }
 };
+
+export const getRegionPreferences = async (token: string) => {
+  try {
+    const { data } = await axios.get(`${backend_url}/getRegion`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      withCredentials: true,
+    });
+
+    return data;
+  } catch (err: any) {
+    throw new Error(
+      err?.response?.data?.error || "Error fetching region preferences"
+    );
+  }
+};
